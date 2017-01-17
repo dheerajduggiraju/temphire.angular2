@@ -25,8 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TypeScriptToolsVersion>2.0</TypeScriptToolsVersion>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -157,6 +156,7 @@
     <Content Include="Content\font-awesome-4.6.3\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\font-awesome-4.6.3\HELP-US-OUT.txt" />
     <Content Include="favicon.ico" />
+    <Content Include="gulpfile.js" />
     <Content Include="index.html" />
     <Content Include="rollup.js" />
     <Content Include="systemjs.config.js" />
@@ -230,7 +230,6 @@
     <Content Include="packages.config" />
     <Content Include="package.json" />
     <Content Include="tsconfig.json" />
-    <Content Include="typings.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

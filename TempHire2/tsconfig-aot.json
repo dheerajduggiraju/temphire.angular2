@@ -1,18 +1,19 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "es2015",
-    "moduleResolution": "classic",
+    "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
+    //"lib": [ "es2015", "dom" ],
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true
   },
-   "exclude": [
-   "node_modules",
+  "exclude": [
+    "node_modules",
     "/node_modules",
     "../node_modules",
     "*node_modules*",
@@ -21,8 +22,11 @@
     "rxjs",
     "typings"
   ],
+  "types": [
+    "core-js"
+  ],
   "angularCompilerOptions": {
-   "genDir": "aot",
-   "skipMetadataEmit" : true
- }
+    "genDir": "aot",
+    "skipMetadataEmit": true
+  }
 }

@@ -15,7 +15,7 @@ gulp.task('build',
 
 // tree shaking
 gulp.task('rollup', ['build'],
-  shell.task([rollup + ' -c rollup.js'], { cwd: clientDir })
+  shell.task([rollup + ' -c rollup-config.js'], { cwd: clientDir })
 )
 
 // watch and build

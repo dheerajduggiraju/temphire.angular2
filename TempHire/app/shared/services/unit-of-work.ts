@@ -1,9 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
-import { EntityManager, Entity, EntityQuery, FetchStrategy, SaveOptions, EntityChangedEventArgs } from 'breeze-client';
+import { EntityManager, Entity, EntityQuery, FetchStrategy, SaveOptions, EntityChangedEventArgs, promises } from 'breeze-client';
+import IPromise = promises.IPromise;
 import { Subject } from 'rxjs/Subject';
 
 import { EntityManagerProvider } from '../../core/services/common';
-import { IRepository, Repository} from './repository';
+import { IRepository, Repository } from './repository';
 
 export interface IEntityFactory<T extends Entity> {
     create(...params: any[]): T;
@@ -71,17 +72,21 @@ export class UnitOfWork {
     }
 
     commit(): Promise<any> {
-        let saveOptions = new SaveOptions({ resourceName: 'savechanges' });
+        return this.saveChanges(this.manager);
+    }
 
-        return this.manager.saveChanges(null, saveOptions)
-            .then((saveResult) => {
+    saveChanges(manager: EntityManager): Promise<any> {
+        return new Promise(function (resolve, reject) {
+            let saveOptions = new SaveOptions({ resourceName: 'savechanges' });
+
+            manager.saveChanges(null, saveOptions).then((saveResult) => {
                 UnitOfWork.savedOrRejectedSubject.next({
                     entities: saveResult.entities,
                     rejected: false
                 });
-
-                return saveResult.entities;
-            });
+                resolve(saveResult.entities);
+            }).catch(e => { reject(e);});
+        });
     }
 
     rollback(): void {

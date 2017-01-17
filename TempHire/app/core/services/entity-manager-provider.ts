@@ -1,16 +1,15 @@
-﻿import { Injectable} from '@angular/core';
-import { 
+﻿import { Injectable } from '@angular/core';
+import {
     config, EntityManager, NamingConvention, DataService, DataType, MetadataStore,
-    EntityType, NavigationProperty, DataProperty, EntityQuery, DataServiceOptions
+    EntityType, NavigationProperty, DataProperty, EntityQuery, DataServiceOptions, promises
 } from 'breeze-client';
-
 // Import required breeze adapters. Rollup.js requires the use of breeze.base.debug.js, which doesn't include
 // the breeze adapters. 
 import 'breeze-client/breeze.dataService.webApi';
 import 'breeze-client/breeze.modelLibrary.backingStore';
 import 'breeze-client/breeze.uriBuilder.json';
 import 'breeze-client/breeze.uriBuilder.odata';
-
+import * as _ from "lodash";
 import { EntityTypeAnnotation } from '../entities/entity-type-annotation';
 import { RegistrationHelper } from '../entities/registration-helper';
 
@@ -41,21 +40,28 @@ export class EntityManagerProvider {
             let masterManager = EntityManagerProvider._masterManager = new EntityManager({
                 dataService: dataService
             });
-            return EntityManagerProvider._preparePromise = masterManager.fetchMetadata().then(() => {
-                RegistrationHelper.register(masterManager.metadataStore);
-                this.registerAnnotations(masterManager.metadataStore);
 
-                // Load lockups
-                var query = EntityQuery.from('lookups');
-                return masterManager.executeQuery(query);
-            }).catch(e => {
-                // If there's an error, we need to ensure prepare can be called fresh
-                EntityManagerProvider._preparePromise = null;
-                throw e;
-            });
+            this.fetchData(masterManager);
         }
 
         return EntityManagerProvider._preparePromise;
+    }
+
+    fetchData(masterManager: EntityManager): void {
+        EntityManagerProvider._preparePromise = new Promise(function (resolve, reject) {
+            masterManager.fetchMetadata().then(() => {
+                RegistrationHelper.register(masterManager.metadataStore);
+                this.registerAnnotations(masterManager.metadataStore);
+                var query = EntityQuery.from('lookups');
+                masterManager.executeQuery(query).then((queryResult) => {
+                    resolve(queryResult);
+                });
+            }).catch(e => {
+                EntityManagerProvider._preparePromise = null;
+                reject(e);
+                throw e;
+            });
+        });
     }
 
     reset(manager: EntityManager): void {

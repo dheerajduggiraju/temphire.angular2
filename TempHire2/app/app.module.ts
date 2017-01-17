@@ -6,14 +6,14 @@ import { BreezeBridgeAngular2Module } from 'breeze-bridge-angular2'
 
 import { routing } from './app.routes';
 
-//import { CoreModule } from './core/core.module';
-//import { SharedModule } from './shared/shared.module';
-//import { ResourceMgtModule } from './resourcemgt/resource-mgt.module';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { ResourceMgtModule } from './resourcemgt/resource-mgt.module';
 
 import { AppComponent } from './app.component';
-//import { LoginComponent } from './login.component';
+import { LoginComponent } from './login.component';
 import { HomeComponent } from './home.component';
-//import { NavBarComponent } from './nav-bar.component';
+import { NavBarComponent } from './nav-bar.component';
 
 @NgModule({
     imports: [
@@ -22,12 +22,12 @@ import { HomeComponent } from './home.component';
         HttpModule,
         FormsModule,
         routing,
-        //CoreModule,
-        //SharedModule,
-        //ResourceMgtModule
+        CoreModule,
+        SharedModule,
+        ResourceMgtModule
     ],
     declarations: [
-        AppComponent, HomeComponent
+        AppComponent, LoginComponent, HomeComponent, NavBarComponent
     ],
     bootstrap: [AppComponent]
 })

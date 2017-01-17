@@ -28,13 +28,22 @@ export class ResourceDetailComponent implements OnInit, CanComponentDeactivate {
             let reportId = params['id'];
 
             this.unitOfWork.clear();
-            this.busyService.busy(this.unitOfWork.staffingResources.withId(reportId).then(data => {
+            this.busyService.busy(this.busy(this.unitOfWork, reportId, this.dialogService));
+        });
+    }
+
+    busy(unitOfWork: ResourceMgtUnitOfWork, reportId : any, dialogService:DialogService): Promise<any> {
+        return new Promise(function (resolve, reject) {
+            unitOfWork.staffingResources.withId(reportId).then(data => {
                 if (data) {
                     this.model = data;
                 } else {
-                    this.dialogService.messageBox('Not found!', 'The staffing resource with the given identifier wasn\'t found.', ['Ok']);
+                    dialogService.messageBox('Not found!', 'The staffing resource with the given identifier wasn\'t found.', ['Ok']);
                 }
-            }));
+                resolve();
+            }).catch(e => {
+                reject(e);
+            });
         });
     }
 

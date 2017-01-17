@@ -27,10 +27,10 @@ export class ResourceMgtComponent implements OnInit, OnDestroy {
 
         this.savedOrRejectedSub = ResourceMgtUnitOfWork.savedOrRejected.subscribe(args => {
             if (!args.rejected) {
-                this.loadList();
+                this.loadList(this.unitOfWork);
             }
         });
-        this.loadList();
+        this.loadList(this.unitOfWork);
     }
 
     ngOnDestroy() {
@@ -41,14 +41,18 @@ export class ResourceMgtComponent implements OnInit, OnDestroy {
         this.router.navigate(['/resourcemgt', staffingResource.id]);
     }
 
-    private loadList() {
-        return this.busyService.busy(this.unitOfWork.staffingResourceListItems.all()
-            .then(data => {
-                this.staffingResources = data;
-                if (!this.staffingResourceId && data.length > 0) {
-                    this.router.navigate(['/resourcemgt', data[0].id]);
-                }
-                return data;
-            }));
+    private loadList(unitOfWork: ResourceMgtUnitOfWork): Promise<any> {
+        return new Promise(function (resolve, reject) {
+            this.busyService.busy(unitOfWork.staffingResourceListItems.all()
+                .then((data) => {
+                    this.staffingResources = data;
+                    if (!this.staffingResourceId && data.length > 0) {
+                        this.router.navigate(['/resourcemgt', data[0].id]);
+                    }
+                    resolve(data);
+                }).catch(e => {
+                    reject(e);
+                }));
+        });
     }
 }
