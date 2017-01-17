@@ -28,19 +28,27 @@ export class ResourceDetailComponent implements OnInit, CanComponentDeactivate {
             let reportId = params['id'];
 
             this.unitOfWork.clear();
-            this.busyService.busy(this.busy(this.unitOfWork, reportId, this.dialogService));
+            this.busyService.busy(this.busy(this.unitOfWork, reportId).then((data) => {
+                if (data) {
+                    this.model = data;
+                    this.model.fullName = this.getFullName(this.model); 
+                } else {
+                    this.dialogService.messageBox('Not found!', 'The staffing resource with the given identifier wasn\'t found.', ['Ok']);
+                }
+            }))
         });
     }
 
-    busy(unitOfWork: ResourceMgtUnitOfWork, reportId : any, dialogService:DialogService): Promise<any> {
+    getFullName(model: StaffingResource):string {
+        return ['firstName', 'middleName', 'lastName']
+            .map(x => model[x])
+            .reduce((prev, cur) => prev ? `${prev} ${cur}` : cur, '');
+    }
+
+    busy(unitOfWork: ResourceMgtUnitOfWork, reportId: any): Promise<StaffingResource> {        
         return new Promise(function (resolve, reject) {
-            unitOfWork.staffingResources.withId(reportId).then(data => {
-                if (data) {
-                    this.model = data;
-                } else {
-                    dialogService.messageBox('Not found!', 'The staffing resource with the given identifier wasn\'t found.', ['Ok']);
-                }
-                resolve();
+            unitOfWork.staffingResources.withId(reportId).then(data => {                
+                resolve(data);
             }).catch(e => {
                 reject(e);
             });

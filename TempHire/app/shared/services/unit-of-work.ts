@@ -1,6 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
 import { EntityManager, Entity, EntityQuery, FetchStrategy, SaveOptions, EntityChangedEventArgs, promises } from 'breeze-client';
-import IPromise = promises.IPromise;
 import { Subject } from 'rxjs/Subject';
 
 import { EntityManagerProvider } from '../../core/services/common';
@@ -10,10 +9,23 @@ export interface IEntityFactory<T extends Entity> {
     create(...params: any[]): T;
 }
 
+//export interface NoParamConstructor {
+//    getNew<T extends Entity>():T    
+//}
+
+//export class Activator implements NoParamConstructor {
+//    getNew<T extends Entity>(): { new (): T } {
+//        return { new(): T };
+//    }
+//}
+
+
 @Injectable()
 export class EntityFactory<T extends Entity> implements IEntityFactory<T> {
 
-    constructor(private _type: { new (): T; }, private _manager: EntityManager) {
+    //private _type: T;
+    constructor(private _type: Entity, private _manager: EntityManager) {
+        
     }
 
     create(config?: any): T {
@@ -136,7 +148,7 @@ export class UnitOfWork {
     }
 
     protected createFactory<T extends Entity>(type: { new (): T; }) {
-        return new EntityFactory<T>(type, this.manager);
+        return new EntityFactory<T>(new type(), this.manager);
     }
 }
 

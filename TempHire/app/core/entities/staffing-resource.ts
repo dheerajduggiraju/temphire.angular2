@@ -11,6 +11,8 @@ import { core } from 'breeze-client';
 
 export class StaffingResource extends EntityBase {
 
+    fullName: string;
+
     /// <code> Place custom code between <code> tags
     constructor() {
         super();
@@ -55,7 +57,7 @@ export class StaffingResource extends EntityBase {
         address.primary = true;
     }
 
-    get fullName(): string {
+    getFullName() {
         return ['firstName', 'middleName', 'lastName']
             .map(x => this[x])
             .reduce((prev, cur) => prev ? `${prev} ${cur}` : cur, '');

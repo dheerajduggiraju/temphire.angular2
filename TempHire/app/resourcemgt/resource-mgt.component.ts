@@ -27,10 +27,20 @@ export class ResourceMgtComponent implements OnInit, OnDestroy {
 
         this.savedOrRejectedSub = ResourceMgtUnitOfWork.savedOrRejected.subscribe(args => {
             if (!args.rejected) {
-                this.loadList(this.unitOfWork);
+                this.loadList(this.unitOfWork, this.busyService).then((data) => {
+                    this.staffingResources = data;
+                    if (!this.staffingResourceId && data.length > 0) {
+                        this.router.navigate(['/resourcemgt', data[0].id]);
+                    }
+                });
             }
         });
-        this.loadList(this.unitOfWork);
+        this.loadList(this.unitOfWork, this.busyService).then((data) => {
+            this.staffingResources = data;
+            if (!this.staffingResourceId && data.length > 0) {
+                this.router.navigate(['/resourcemgt', data[0].id]);
+            }
+        });
     }
 
     ngOnDestroy() {
@@ -41,18 +51,14 @@ export class ResourceMgtComponent implements OnInit, OnDestroy {
         this.router.navigate(['/resourcemgt', staffingResource.id]);
     }
 
-    private loadList(unitOfWork: ResourceMgtUnitOfWork): Promise<any> {
-        return new Promise(function (resolve, reject) {
-            this.busyService.busy(unitOfWork.staffingResourceListItems.all()
-                .then((data) => {
-                    this.staffingResources = data;
-                    if (!this.staffingResourceId && data.length > 0) {
-                        this.router.navigate(['/resourcemgt', data[0].id]);
-                    }
+    private loadList = (unitOfWork: ResourceMgtUnitOfWork, busyService: BusyService): Promise<any> => {
+        return busyService.busy(new Promise(function (resolve, reject) {
+            unitOfWork.staffingResourceListItems.all()
+                .then((data) => {                   
                     resolve(data);
                 }).catch(e => {
                     reject(e);
-                }));
-        });
+                });
+        }));
     }
 }

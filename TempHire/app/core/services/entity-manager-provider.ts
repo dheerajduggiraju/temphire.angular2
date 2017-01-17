@@ -22,7 +22,7 @@ export class EntityManagerProvider {
 
     constructor() { }
 
-    prepare(): Promise<any> {
+    prepare=(): Promise<any>=> {
         if (!EntityManagerProvider._preparePromise) {
             // Configure breeze adapaters. See rollup.js comment above
             config.initializeAdapterInstances({ dataService: 'webApi', uriBuilder: 'odata' });
@@ -41,17 +41,17 @@ export class EntityManagerProvider {
                 dataService: dataService
             });
 
-            this.fetchData(masterManager);
+            this.fetchData(masterManager, this.registerAnnotations);
         }
 
         return EntityManagerProvider._preparePromise;
     }
 
-    fetchData(masterManager: EntityManager): void {
+    fetchData = (masterManager: EntityManager, registerAnnotations: ((metadataStore: MetadataStore)=>any)) => {
         EntityManagerProvider._preparePromise = new Promise(function (resolve, reject) {
             masterManager.fetchMetadata().then(() => {
-                RegistrationHelper.register(masterManager.metadataStore);
-                this.registerAnnotations(masterManager.metadataStore);
+                //RegistrationHelper.register(masterManager.metadataStore);
+                registerAnnotations(masterManager.metadataStore);
                 var query = EntityQuery.from('lookups');
                 masterManager.executeQuery(query).then((queryResult) => {
                     resolve(queryResult);
