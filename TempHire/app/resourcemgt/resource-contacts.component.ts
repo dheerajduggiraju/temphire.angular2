@@ -20,15 +20,15 @@ export class ResourceContactsComponent implements OnInit {
 
     ngOnInit() {
         this.unitOfWork.states.all().then(data => {
-            this.states = _.sortBy(data, x => x.name);
+            this.states = data;//_.sortBy(data, x => x.name);
         });
 
         this.unitOfWork.addressTypes.all().then(data => {
-            this.addressTypes = _.sortBy(data, x => x.displayName);
+            this.addressTypes = data;//_.sortBy(data, x => x.displayName);
         });
 
         this.unitOfWork.phoneNumberTypes.all().then(data => {
-            this.phoneNumberTypes = _.sortBy(data, x => x.name);
+            this.phoneNumberTypes = data;//_.sortBy(data, x => x.name);
         });
     }
 
